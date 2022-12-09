@@ -1,0 +1,46 @@
+version: '3.5'
+services:
+
+  mysql:
+    image: mysql:5.7
+    container_name: MyDB
+    ports: 
+      - "6969:3306"
+    volumes:
+      - "./database/data:/var/lib/mysql"
+      - "./database/init.sql:/docker-entrypoint-initdb.d/init.sql"
+    networks:
+      - api
+      - manager
+    env_file:
+      - db_vars.env
+
+  server:
+    depends_on:
+      - mysql
+    build: "../server"
+    image: my-server
+    container_name: my-server
+    ports: 
+      - "6000:6000"
+    networks: 
+      - api
+    command: sh -c "python3 server.py"
+    env_file:
+      - db_vars.env
+
+  adminer:
+    depends_on:
+      - mysql
+    image: adminer
+    container_name: adminer
+    ports:
+      - "42069:8080"
+    networks:
+      - manager
+
+networks:
+  api:
+    name: api
+  manager:
+    name: manager
