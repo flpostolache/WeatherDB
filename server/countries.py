@@ -52,6 +52,13 @@ def post_get_countries():
 @expects_json(schema_ex, ignore_for=["DELETE"])
 def put_delete_countries(id):
 	if request.method == "PUT":
+		try:
+			integer_id = int(id)
+			integer_id_from_resp = request.get_json()['id']
+			if integer_id != integer_id_from_resp:
+				return Response(status=400)
+		except:
+			return Response(status=400)
 		mycursor.execute('SELECT * FROM Tari WHERE id = %s', [id])
 		entry = mycursor.fetchone()
 		if not entry:

@@ -12,6 +12,8 @@ services:
     networks:
       - api
       - manager
+    environment:
+      MYSQL_ROOT_PASSWORD: root
     env_file:
       - db_vars.env
 
@@ -25,7 +27,8 @@ services:
       - "6000:6000"
     networks: 
       - api
-    command: sh -c "python3 server.py"
+    environment:
+      DB_HOSTNAME: mysql
     env_file:
       - db_vars.env
 
